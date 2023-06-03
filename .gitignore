@@ -1,0 +1,5 @@
+.pypirc
+
+unisock_stream.egg-info
+build
+*__pycache__/

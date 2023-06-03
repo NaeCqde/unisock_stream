@@ -1,0 +1,13 @@
+{
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
+    },
+    "python.analysis.typeCheckingMode": "basic",
+    "isort.args": ["--profile", "black"],
+    "python.analysis.extraPaths": ["./discord.py-selfbot-v114514"]
+}
