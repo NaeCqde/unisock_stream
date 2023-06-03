@@ -12,10 +12,10 @@ DEFAULT_TIMEOUT = (10.0, 3.0)
 class AsyncSocketStreamReader:
     def __init__(
         self,
-        callback: Callable[[bytes], Any],
+        callback: Callable[[bytes], Any | Coroutine[Any, Any, Any]],
         timeout: tuple[float, float] = vars.DEFAULT_TIMEOUT,
     ):
-        self.callback: Callable[[bytes], Any] = callback
+        self.callback: Callable[[bytes], Any | Coroutine[Any, Any, Any]] = callback
         self.timeout: tuple[float, float] = timeout
 
         self.from_pid: int = vars.PID
@@ -40,9 +40,32 @@ class AsyncSocketStreamReader:
 
         self._conn: socket.socket | None = None
 
-        self.stopped: bool = False
+        self.__stopped: bool = False
 
         vars.counter += 1
+
+    @property
+    def stopped(self):
+        return self.__stopped
+
+    @stopped.setter
+    def stopped(self, value: bool):
+        self.__stopped = value
+
+        if self.stopped:
+            functions: list[tuple[Callable, list[Any]]] = [
+                (self._sock.close, []),
+                (os.remove, [self.file]),
+            ]
+
+            if self._conn:
+                functions.insert(0, (self._conn.close, []))
+
+            for func, args in functions:
+                try:
+                    func(*args)
+                except:
+                    pass
 
     async def work(self):
         loop = asyncio.get_running_loop()
@@ -110,9 +133,32 @@ class AsyncSocketStreamWriter:
 
         self._sock.listen(1)
 
-        self.stopped: bool = False
+        self.__stopped: bool = False
 
         vars.counter += 1
+
+    @property
+    def stopped(self):
+        return self.__stopped
+
+    @stopped.setter
+    def stopped(self, value: bool):
+        self.__stopped = value
+
+        if self.stopped:
+            functions: list[tuple[Callable, list[Any]]] = [
+                (self._sock.close, []),
+                (os.remove, [self.file]),
+            ]
+
+            if self._conn:
+                functions.insert(0, (self._conn.close, []))
+
+            for func, args in functions:
+                try:
+                    func(*args)
+                except:
+                    pass
 
     async def work(self):
         loop = asyncio.get_running_loop()
@@ -180,9 +226,32 @@ class SocketStreamReader:
 
         self._conn: socket.socket | None = None
 
-        self.stopped: bool = False
+        self.__stopped: bool = False
 
         vars.counter += 1
+
+    @property
+    def stopped(self):
+        return self.__stopped
+
+    @stopped.setter
+    def stopped(self, value: bool):
+        self.__stopped = value
+
+        if self.stopped:
+            functions: list[tuple[Callable, list[Any]]] = [
+                (self._sock.close, []),
+                (os.remove, [self.file]),
+            ]
+
+            if self._conn:
+                functions.insert(0, (self._conn.close, []))
+
+            for func, args in functions:
+                try:
+                    func(*args)
+                except:
+                    pass
 
     def work(self):
         self._sock.settimeout(self.timeout[0])
@@ -243,9 +312,32 @@ class SocketStreamWriter:
 
         self._sock.listen(1)
 
-        self.stopped: bool = False
+        self.__stopped: bool = False
 
         vars.counter += 1
+
+    @property
+    def stopped(self):
+        return self.__stopped
+
+    @stopped.setter
+    def stopped(self, value: bool):
+        self.__stopped = value
+
+        if self.stopped:
+            functions: list[tuple[Callable, list[Any]]] = [
+                (self._sock.close, []),
+                (os.remove, [self.file]),
+            ]
+
+            if self._conn:
+                functions.insert(0, (self._conn.close, []))
+
+            for func, args in functions:
+                try:
+                    func(*args)
+                except:
+                    pass
 
     def work(self):
         self._sock.settimeout(self.timeout)
